@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvoiceVault</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --navy: #0a1628;
+      --navy2: #0f2040;
+      --navy3: #162d55;
+      --navy4: #1e3a6a;
+      --orange: #ff6b1a;
+      --orange2: #e55500;
+      --orange3: #ff8c42;
+      --cream: #f5f0e8;
+      --white: #ffffff;
+      --muted: #6b7fa3;
+      --muted2: #4a5f82;
+      --border: rgba(255, 255, 255, 0.07);
+      --error: #ff4444;
+      --success: #00cc88;
+      --warning: #ffaa00;
+      --card: #0f2040;
+      --surface: #0a1628;
+      --text: #e8eef8;
+      --text2: #a0b0cc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    /* ── HEADER ───────────────────────────────────────────────── */
+    header {
+      background: var(--navy2);
+      border-bottom: 1px solid var(--border);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--white);
+      letter-spacing: 2px;
+    }
+
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--navy3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--text2);
+    }
+
+    .user-role {
+      background: var(--orange);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hdr-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: var(--navy3);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .hdr-btn:hover {
+      background: var(--navy4);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .hdr-btn.orange {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: white;
+    }
+
+    .hdr-btn.orange:hover {
+      background: var(--orange2);
+    }
+
+    .hdr-btn.danger {
+      background: rgba(255, 68, 68, 0.15);
+      border-color: rgba(255, 68, 68, 0.3);
+      color: #ff6666;
+    }
+
+    .hdr-btn.danger:hover {
+      background: rgba(255, 68, 68, 0.25);
+    }
+
+    /* ── SIDEBAR ──────────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      width: 220px;
+      background: var(--navy2);
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+      flex-shrink: 0;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+
+    .nav-section {
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 10px 10px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      background: var(--navy3);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 107, 26, 0.15);
+      color: var(--orange3);
+      border: 1px solid rgba(255, 107, 26, 0.2);
+    }
+
+    .nav-item .nav-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--orange);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    /* ── MAIN CONTENT ─────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      padding: 28px;
+      overflow-x: hidden;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ── PAGE HEADER ──────────────────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      color: var(--white);
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+
+    .page-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    /* ── KPI CARDS ────────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .kpi-card:hover {
+      border-color: rgba(255, 107, 26, 0.3);
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+    }
+
+    .kpi-card.orange::after {
+      background: var(--orange);
+    }
+
+    .kpi-card.green::after {
+      background: var(--success);
+    }
+
+    .kpi-card.blue::after {
+      background: #4d9eff;
+    }
+
+    .kpi-card.purple::after {
+      background: #9b6dff;
+    }
+
+    .kpi-card.teal::after {
+      background: #00ccbb;
+    }
+
+    .kpi-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      line-height: 1;
+      color: var(--white);
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── CHARTS ───────────────────────────────────────────────── */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+
+    .chart-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--white);
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+    }
+
+    /* ── TABLE ────────────────────────────────────────────────── */
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .table-toolbar {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      background: var(--navy);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      width: 220px;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--orange);
+    }
+
+    .search-input::placeholder {
+      color: var(--muted);
+    }
+
+    .filter-select {
+      background: var(--navy);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .ml-auto {
+      margin-left: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--navy);
+    }
+
+    th {
+      padding: 10px 14px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover td {
+      background: rgba(255, 107, 26, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-orange {
+      background: rgba(255, 107, 26, 0.15);
+      color: var(--orange3);
+      border: 1px solid rgba(255, 107, 26, 0.2);
+    }
+
+    .badge-green {
+      background: rgba(0, 204, 136, 0.12);
+      color: #00e69a;
+      border: 1px solid rgba(0, 204, 136, 0.2);
+    }
+
+    .badge-blue {
+      background: rgba(77, 158, 255, 0.12);
+      color: #7ab8ff;
+      border: 1px solid rgba(77, 158, 255, 0.2);
+    }
+
+    .badge-purple {
+      background: rgba(155, 109, 255, 0.12);
+      color: #bb99ff;
+      border: 1px solid rgba(155, 109, 255, 0.2);
+    }
+
+    .badge-muted {
+      background: rgba(107, 127, 163, 0.12);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .amt {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+    }
+
+    .amt-green {
+      color: var(--success);
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: background 0.15s;
+      color: var(--muted);
+    }
+
+    .action-btn:hover.edit {
+      background: rgba(77, 158, 255, 0.15);
+      color: #7ab8ff;
+    }
+
+    .action-btn:hover.delete {
+      background: rgba(255, 68, 68, 0.15);
+      color: #ff6666;
+    }
+
+    /* ── UPLOAD ZONE ──────────────────────────────────────────── */
+    .upload-zone {
+      background: var(--card);
+      border: 2px dashed rgba(255, 107, 26, 0.3);
+      border-radius: 16px;
+      padding: 60px 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 24px;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: var(--orange);
+      background: rgba(255, 107, 26, 0.05);
+    }
+
+    .upload-icon-big {
+      font-size: 52px;
+      margin-bottom: 16px;
+    }
+
+    .upload-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: var(--white);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .upload-sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .upload-cta {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 13px 32px;
+      border-radius: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .upload-cta:hover {
+      background: var(--orange2);
+    }
+
+    /* Queue list */
+    .queue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .queue-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .q-name {
+      font-weight: 500;
+      font-size: 13px;
+      flex: 1;
+    }
+
+    .q-msg {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.proc {
+      background: var(--warning);
+      animation: blink 1s infinite;
+    }
+
+    .dot.done {
+      background: var(--success);
+    }
+
+    .dot.err {
+      background: var(--error);
+    }
+
+    .dot.dup {
+      background: var(--muted);
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    /* ── MODAL ────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      width: 600px;
+      max-width: 94vw;
+      max-height: 88vh;
+      overflow-y: auto;
+      transform: scale(0.96);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.open .modal {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      color: var(--white);
+      letter-spacing: 1px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .detail-item label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .detail-item .val {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .detail-item.full {
+      grid-column: 1/-1;
+    }
+
+    .detail-total {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      color: var(--success);
+      letter-spacing: 1px;
+    }
+
+    /* Line items table in modal */
+    .lit {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .lit th {
+      background: var(--navy);
+      padding: 8px 10px;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    .lit td {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* Edit inputs */
+    .edit-input {
+      width: 100%;
+      background: var(--navy);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .edit-input:focus {
+      border-color: var(--orange);
+    }
+
+    /* ── EMPTY STATE ──────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 14px;
+    }
+
+    .empty-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      color: var(--text2);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .empty-sub {
+      font-size: 13px;
+    }
+
+    /* ── TOAST ────────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 999;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s;
+      pointer-events: none;
+      max-width: 320px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.ok::before {
+      content: '✓ ';
+      color: var(--success);
+    }
+
+    .toast.err::before {
+      content: '✕ ';
+      color: var(--error);
+    }
+
+    .toast.info::before {
+      content: '● ';
+      color: var(--orange);
+    }
+
+    /* ── ADMIN PANEL ──────────────────────────────────────────── */
+    .user-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .user-card:hover {
+      border-color: rgba(255, 107, 26, 0.3);
+    }
+
+    .user-avatar {
+      width: 42px;
+      height: 42px;
+      background: var(--navy3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--orange3);
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .user-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .stat-pill {
+      text-align: right;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stat-pill .amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--success);
+      letter-spacing: 0.5px;
+      display: block;
+    }
+
+    /* ── SECTION TITLE ────────────────────────────────────────── */
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--white);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    /* ── DIVIDER ──────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    /* ── SAVE BTN ─────────────────────────────────────────────── */
+    .save-btn {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 16px;
+    }
+
+    .save-btn:hover {
+      background: var(--orange2);
+    }
+
+    .save-btn.grey {
+      background: var(--navy3);
+      margin-left: 8px;
+    }
+
+    .save-btn.grey:hover {
+      background: var(--navy4);
+    }
+
+    /* ── INFO BANNER ──────────────────────────────────────────── */
+    .info-banner {
+      background: rgba(255, 170, 0, 0.08);
+      border: 1px solid rgba(255, 170, 0, 0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #ffcc44;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--navy4);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted2);
+    }
+
+    /* ── BATCH BAR ────────────────────────────────────────────── */
+    .batch-bar {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--navy2);
+      border: 1px solid rgba(255, 107, 26, 0.4);
+      border-radius: 50px;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 107, 26, 0.1);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 500;
+      white-space: nowrap;
+    }
+
+    .batch-bar.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .batch-count {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      color: var(--orange3);
+      letter-spacing: 1px;
+      padding-right: 16px;
+      border-right: 1px solid var(--border);
+    }
+
+    .batch-btn {
+      background: none;
+      border: none;
+      color: var(--text2);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+
+    .batch-btn:hover {
+      background: var(--navy3);
+      color: var(--text);
+    }
+
+    .batch-btn.danger {
+      color: #ff6666;
+    }
+
+    .batch-btn.danger:hover {
+      background: rgba(255, 68, 68, 0.15);
+    }
+
+    .batch-btn.cancel {
+      color: var(--muted);
+    }
+
+    /* Checkbox styling */
+    input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--orange);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      InvoiceVault
+    </div>
+    <div class="hdr-right">
+      <div class="user-badge">
+        <span id="hdrUsername">Loading...</span>
+        <span class="user-role" id="hdrRole">client</span>
+      </div>
+      <button class="hdr-btn orange" onclick="exportExcel()">⬇ Export Excel</button>
+      <button class="hdr-btn danger" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ── SIDEBAR ── -->
+    <nav class="sidebar">
+      <div class="nav-section">
+        <div class="nav-label">Main</div>
+        <div class="nav-item active" onclick="goTo('dashboard')">
+          <span class="nav-icon">📊</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="goTo('upload')">
+          <span class="nav-icon">⬆</span> Upload PDFs
+        </div>
+        <div class="nav-item" onclick="goTo('invoices')">
+          <span class="nav-icon">📄</span> All Invoices
+          <span class="nav-badge" id="navCount">0</span>
+        </div>
+        <div class="nav-item" onclick="goTo('monthly')">
+          <span class="nav-icon">📅</span> Monthly
+        </div>
+        <div class="nav-item" onclick="goTo('clients')">
+          <span class="nav-icon">🏢</span> Clients
+        </div>
+      </div>
+      <div class="nav-section" id="adminNav" style="display:none">
+        <div class="nav-label">Admin</div>
+        <div class="nav-item" onclick="goTo('admin')">
+          <span class="nav-icon">🛡</span> Admin Panel
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── MAIN ── -->
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Dashboard</div>
+            <div class="page-sub" id="dashSub">Loading your data...</div>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card orange">
+            <div class="kpi-label">Total Revenue</div>
+            <div class="kpi-value" id="k-rev">$0</div>
+            <div class="kpi-sub">CAD · All time</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Invoices</div>
+            <div class="kpi-value" id="k-cnt">0</div>
+            <div class="kpi-sub">Processed</div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-label">Avg Invoice</div>
+            <div class="kpi-value" id="k-avg">$0</div>
+            <div class="kpi-sub">Per invoice</div>
+          </div>
+          <div class="kpi-card purple">
+            <div class="kpi-label">Unique Clients</div>
+            <div class="kpi-value" id="k-cli">0</div>
+            <div class="kpi-sub">Billed</div>
+          </div>
+          <div class="kpi-card teal">
+            <div class="kpi-label">Total Tax (HST)</div>
+            <div class="kpi-value" id="k-tax">$0</div>
+            <div class="kpi-sub">Collected</div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-title">Revenue by Month</div>
+            <div style="height:200px"><canvas id="revChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">By Category</div>
+            <div style="height:200px"><canvas id="catChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="section-title">Recent Invoices</div>
+        <div class="table-card" id="recentTable"></div>
+      </div>
+
+      <!-- UPLOAD -->
+      <div class="page" id="page-upload">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Upload PDFs</div>
+            <div class="page-sub">Server-side parsing — accurate line-item extraction</div>
+          </div>
+        </div>
+
+        <div class="info-banner">
+          ⚡ <div>PDFs are sent to the Python parser which uses coordinate-based column detection for accurate line item
+            extraction. Duplicate invoices are automatically skipped.</div>
+        </div>
+
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+          ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+          <div class="upload-icon-big">📤</div>
+          <div class="upload-title">Drop Invoice PDFs Here</div>
+          <div class="upload-sub">Or click to browse — supports multiple files at once</div>
+          <button class="upload-cta"
+            onclick="event.stopPropagation();document.getElementById('fileInput').click()">Choose PDFs</button>
+        </div>
+        <input type="file" id="fileInput" accept=".pdf" multiple style="display:none" onchange="handleFiles(event)">
+
+        <div id="queueWrap" style="display:none">
+          <div class="section-title">Processing</div>
+          <div class="queue-list" id="queueList"></div>
+        </div>
+      </div>
+
+      <!-- ALL INVOICES -->
+      <div class="page" id="page-invoices">
+        <div class="page-header">
+          <div>
+            <div class="page-title">All Invoices</div>
+            <div class="page-sub" id="invSub"></div>
+          </div>
+          <button class="hdr-btn orange" onclick="exportExcel()">⬇ Export Excel</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <input class="search-input" id="searchBox" placeholder="🔍 Search client, invoice #..."
+              oninput="renderTable()">
+            <select class="filter-select" id="yrFilter" onchange="renderTable()">
+              <option value="">All years</option>
+            </select>
+            <select class="filter-select" id="moFilter" onchange="renderTable()">
+              <option value="">All months</option>
+            </select>
+            <select class="filter-select" id="catFilter" onchange="renderTable()">
+              <option value="">All categories</option>
+            </select>
+            <span class="ml-auto" style="font-size:12px;color:var(--muted)" id="tableCount"></span>
+          </div>
+          <div id="invoiceTableBody"></div>
+        </div>
+      </div>
+
+      <!-- MONTHLY -->
+      <div class="page" id="page-monthly">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Monthly Breakdown</div>
+            <div class="page-sub">Revenue and invoice counts by month</div>
+          </div>
+        </div>
+        <div id="monthlyContent"></div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="page" id="page-clients">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Clients</div>
+            <div class="page-sub">Revenue breakdown by client</div>
+          </div>
+        </div>
+        <div id="clientsContent"></div>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="page" id="page-admin">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Admin Panel</div>
+            <div class="page-sub">Manage users and view platform stats</div>
+          </div>
+          <button class="hdr-btn orange" onclick="openCreateUser()">+ Create User</button>
+        </div>
+        <div id="adminStatsGrid" class="kpi-grid" style="margin-bottom:28px"></div>
+        <div class="section-title">All Users</div>
+        <div id="usersList"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── INVOICE DETAIL MODAL ── -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Invoice</div>
+        <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- ── BATCH ACTION BAR ── -->
+  <div class="batch-bar" id="batchBar">
+    <div class="batch-count" id="batchCount">0 Selected</div>
+    <button class="batch-btn danger" onclick="bulkDelete()">🗑 Delete Selected</button>
+    <button class="batch-btn" onclick="bulkExport()">&#11015; Export Selected</button>
+    <button class="batch-btn cancel" onclick="clearSelection()">&#10005; Cancel</button>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════
+    //  STATE
+    // ══════════════════════════════════════════════════════════════
+    let invoices = [];
+    let currentUser = null;
+    let revChart, catChart;
+    let selectedIds = new Set();
+
+    const fmt = n => Number(n || 0).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtK = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1000 ? (n / 1000).toFixed(1) + 'K' : fmt(n);
+
+    function toast(msg, type = 'ok') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    function emptyState(icon, title, sub) {
+      return `<div class="empty-state">
+    <div class="empty-icon">${icon}</div>
+    <div class="empty-title">${title}</div>
+    <div class="empty-sub">${sub}</div>
+  </div>`;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  INIT
+    // ══════════════════════════════════════════════════════════════
+    async function init() {
+      try {
+        const r = await fetch('/api/auth/me');
+        if (!r.ok) { window.location.href = '/login.html'; return; }
+        const data = await r.json();
+        currentUser = data.user;
+
+        document.getElementById('hdrUsername').textContent = currentUser.companyName || currentUser.username;
+        document.getElementById('hdrRole').textContent = currentUser.role;
+
+        if (currentUser.role === 'admin') {
+          document.getElementById('adminNav').style.display = 'block';
+        }
+
+        await loadInvoices();
+      } catch (e) {
+        window.location.href = '/login.html';
+      }
+    }
+
+    async function loadInvoices() {
+      try {
+        const r = await fetch('/api/invoices');
+        const data = await r.json();
+        invoices = Array.isArray(data) ? data : [];
+        refresh();
+      } catch (e) {
+        console.error('Load error:', e);
+        invoices = [];
+      }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  NAVIGATION
+    // ══════════════════════════════════════════════════════════════
+    function goTo(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+
+      // Activate nav item
+      document.querySelectorAll('.nav-item').forEach(n => {
+        if (n.textContent.trim().toLowerCase().includes(page)) n.classList.add('active');
+      });
+
+      // Clear selection when navigating away from invoices
+      if (page !== 'invoices') {
+        selectedIds.clear();
+        updateBatchBar();
+      }
+
+      if (page === 'invoices') renderTable();
+      if (page === 'monthly') renderMonthly();
+      if (page === 'clients') renderClients();
+      if (page === 'admin') loadAdmin();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  REFRESH — updates KPIs, charts, tables
+    // ══════════════════════════════════════════════════════════════
+    function refresh() {
+      const n = invoices.length;
+      const totalRev = invoices.reduce((s, i) => s + (i.total || 0), 0);
+      const totalTax = invoices.reduce((s, i) => s + (i.tax || 0), 0);
+      const avg = n ? totalRev / n : 0;
+      const clients = new Set(invoices.map(i => i.clientName).filter(Boolean)).size;
+
+      document.getElementById('k-rev').textContent = '$' + fmtK(totalRev);
+      document.getElementById('k-cnt').textContent = n;
+      document.getElementById('k-avg').textContent = '$' + fmtK(avg);
+      document.getElementById('k-cli').textContent = clients;
+      document.getElementById('k-tax').textContent = '$' + fmtK(totalTax);
+      document.getElementById('navCount').textContent = n;
+      document.getElementById('dashSub').textContent =
+        n ? `${n} invoices · $${fmt(totalRev)} total revenue` : 'No invoices yet — upload your first PDF';
+      document.getElementById('invSub').textContent = `${n} invoices`;
+
+      renderCharts();
+      renderRecentTable();
+      populateFilters();
+    }
+
+    function renderCharts() {
+      if (!invoices.length) return;
+
+      // Revenue by month
+      const revData = {};
+      invoices.forEach(i => {
+        if (!i.year || !i.month) return;
+        const k = `${i.year}-${String(i.month).padStart(2, '0')}`;
+        revData[k] = (revData[k] || 0) + (i.total || 0);
+      });
+      const keys = Object.keys(revData).sort().slice(-12);
+      const MSHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const labels = keys.map(k => { const [y, m] = k.split('-'); return MSHORT[+m - 1] + ' ' + y.slice(2); });
+      const values = keys.map(k => revData[k]);
+
+      const ctxR = document.getElementById('revChart');
+      if (ctxR) {
+        if (revChart) revChart.destroy();
+        revChart = new Chart(ctxR, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Revenue', data: values,
+              backgroundColor: 'rgba(255,107,26,0.7)',
+              borderColor: 'rgba(255,107,26,1)',
+              borderWidth: 1, borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7fa3' } },
+              x: { grid: { display: false }, ticks: { color: '#6b7fa3', font: { size: 11 } } }
+            }
+          }
+        });
+      }
+
+      // Category doughnut
+      const catData = {};
+      invoices.forEach(i => {
+        const c = i.category || 'General';
+        catData[c] = (catData[c] || 0) + (i.total || 0);
+      });
+
+      const ctxC = document.getElementById('catChart');
+      if (ctxC) {
+        if (catChart) catChart.destroy();
+        catChart = new Chart(ctxC, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(catData),
+            datasets: [{
+              data: Object.values(catData),
+              backgroundColor: ['#ff6b1a', '#00cc88', '#4d9eff', '#9b6dff', '#ffaa00', '#00ccbb', '#ff4488'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'right', labels: { color: '#6b7fa3', font: { size: 11 }, padding: 12 } } }
+          }
+        });
+      }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  TABLE RENDERING
+    // ══════════════════════════════════════════════════════════════
+    function buildTable(list, showActions = true) {
+      if (!list.length) return emptyState('📄', 'No Invoices Found', 'Upload PDFs or adjust your filters');
+
+      const allSelected = list.length > 0 && list.every(i => selectedIds.has(i.id));
+
+      return `<table>
+    <thead><tr>
+      ${showActions ? `<th style="width:40px">
+        <input type="checkbox" ${allSelected ? 'checked' : ''} onchange="toggleSelectAll(this)" title="Select All">
+      </th>` : ''}
+      <th>Invoice #</th><th>Client</th><th>Category</th>
+      <th>Date</th><th>Quarter</th><th>Subtotal</th><th>Tax</th>
+      <th>Total</th>${showActions ? '<th></th>' : ''}
+    </tr></thead>
+    <tbody>
+    ${list.map(i => `
+      <tr onclick="showDetail('${i.id}')" style="${selectedIds.has(i.id) ? 'background:rgba(255,107,26,0.06)' : ''}">
+        ${showActions ? `<td onclick="event.stopPropagation()">
+          <input type="checkbox" data-id="${i.id}" ${selectedIds.has(i.id) ? 'checked' : ''} onchange="toggleSelect('${i.id}')">
+        </td>` : ''}
+        <td><span class="badge badge-orange">${i.invoiceNumber || '—'}</span></td>
+        <td><strong>${i.clientName || 'Unknown'}</strong></td>
+        <td><span class="badge badge-blue">${i.category || 'General'}</span></td>
+        <td>${fmtDate(i.date)}</td>
+        <td>${i.quarter ? `<span class="badge badge-purple">${i.quarter} ${i.year || ''}</span>` : '—'}</td>
+        <td class="amt">$${fmt(i.subtotal || 0)}</td>
+        <td class="amt">$${fmt(i.tax || 0)}</td>
+        <td class="amt amt-green">$${fmt(i.total || 0)}</td>
+        ${showActions ? `<td onclick="event.stopPropagation()" style="white-space:nowrap">
+          <button class="action-btn edit" onclick="openEdit('${i.id}')" title="Edit">✏️</button>
+          <button class="action-btn delete" onclick="deleteInvoice('${i.id}')" title="Delete">🗑</button>
+        </td>` : ''}
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+    }
+
+    // ── SELECTION FUNCTIONS ────────────────────────────────────────────────
+    function toggleSelect(id) {
+      if (selectedIds.has(id)) selectedIds.delete(id);
+      else selectedIds.add(id);
+      updateBatchBar();
+      renderTable();
+    }
+
+    function toggleSelectAll(checkbox) {
+      // Get all currently visible invoice IDs from the table rows
+      const visibleIds = [...document.querySelectorAll('#invoiceTableBody tbody tr')]
+        .map(tr => {
+          const cb = tr.querySelector('input[type="checkbox"]');
+          return cb ? cb.dataset.id : null;
+        })
+        .filter(Boolean);
+
+      if (checkbox.checked) visibleIds.forEach(id => selectedIds.add(id));
+      else visibleIds.forEach(id => selectedIds.delete(id));
+      updateBatchBar();
+      renderTable();
+    }
+
+    function clearSelection() {
+      selectedIds.clear();
+      updateBatchBar();
+      renderTable();
+    }
+
+    function updateBatchBar() {
+      const bar = document.getElementById('batchBar');
+      const count = document.getElementById('batchCount');
+      const n = selectedIds.size;
+      if (n > 0) {
+        bar.classList.add('show');
+        count.textContent = `${n} Selected`;
+      } else {
+        bar.classList.remove('show');
+      }
+    }
+
+    async function bulkDelete() {
+      const n = selectedIds.size;
+      if (!n) return;
+      if (!confirm(`Permanently delete ${n} invoice${n > 1 ? 's' : ''}? This cannot be undone.`)) return;
+
+      const ids = [...selectedIds];
+      let deleted = 0;
+
+      for (const id of ids) {
+        try {
+          await fetch('/api/invoices/' + id, { method: 'DELETE' });
+          invoices = invoices.filter(i => i.id !== id);
+          deleted++;
+        } catch (e) { console.error('Delete failed for', id, e); }
+      }
+
+      selectedIds.clear();
+      updateBatchBar();
+      refresh();
+      renderTable();
+      toast(`${deleted} invoice${deleted > 1 ? 's' : ''} deleted`, 'ok');
+    }
+
+    async function bulkExport() {
+      const ids = [...selectedIds];
+      if (!ids.length) return;
+      // For now export all (full export filtered by selection would need backend support)
+      // This triggers the standard export
+      const a = document.createElement('a');
+      a.href = '/api/invoices/export/excel';
+      a.download = 'selected_invoices.xlsx';
+      a.click();
+      toast(`Exporting ${ids.length} invoices...`, 'info');
+    }
+
+    function renderRecentTable() {
+      document.getElementById('recentTable').innerHTML = buildTable(invoices.slice(0, 8), false);
+    }
+
+    function renderTable() {
+      const search = (document.getElementById('searchBox')?.value || '').toLowerCase();
+      const yr = document.getElementById('yrFilter')?.value || '';
+      const mo = document.getElementById('moFilter')?.value || '';
+      const cat = document.getElementById('catFilter')?.value || '';
+
+      const filtered = invoices.filter(i => {
+        if (yr && String(i.year) !== yr) return false;
+        if (mo && String(i.month) !== mo) return false;
+        if (cat && (i.category || '') !== cat) return false;
+        if (search) {
+          const hay = [i.clientName, i.invoiceNumber, i.date, i.category, i.fileName].join(' ').toLowerCase();
+          if (!hay.includes(search)) return false;
+        }
+        return true;
+      });
+
+      document.getElementById('tableCount').textContent = `${filtered.length} of ${invoices.length}`;
+      document.getElementById('invoiceTableBody').innerHTML = buildTable(filtered, true);
+    }
+
+    function populateFilters() {
+      const MNAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const years = [...new Set(invoices.map(i => i.year).filter(Boolean))].sort((a, b) => b - a);
+      const months = [...new Set(invoices.map(i => i.month).filter(Boolean))].sort((a, b) => a - b);
+      const cats = [...new Set(invoices.map(i => i.category).filter(Boolean))].sort();
+
+      const yf = document.getElementById('yrFilter');
+      const mf = document.getElementById('moFilter');
+      const cf = document.getElementById('catFilter');
+      if (!yf) return;
+
+      const cy = yf.value, cm = mf.value, cc = cf.value;
+      yf.innerHTML = '<option value="">All years</option>' + years.map(y => `<option value="${y}" ${y == cy ? 'selected' : ''}>${y}</option>`).join('');
+      mf.innerHTML = '<option value="">All months</option>' + months.map(m => `<option value="${m}" ${m == cm ? 'selected' : ''}>${MNAMES[m - 1]}</option>`).join('');
+      cf.innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option value="${c}" ${c == cc ? 'selected' : ''}>${c}</option>`).join('');
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  MONTHLY VIEW
+    // ══════════════════════════════════════════════════════════════
+    function renderMonthly() {
+      const el = document.getElementById('monthlyContent');
+      if (!invoices.length) { el.innerHTML = emptyState('📅', 'No Data Yet', 'Upload invoices to see monthly breakdown'); return; }
+
+      const map = {};
+      invoices.forEach(i => {
+        if (!i.year || !i.month) return;
+        const k = `${i.year}-${String(i.month).padStart(2, '0')}`;
+        if (!map[k]) map[k] = { year: i.year, month: i.month, monthName: i.monthName, quarter: i.quarter, count: 0, total: 0, tax: 0, subtotal: 0 };
+        map[k].count++; map[k].total += i.total || 0; map[k].tax += i.tax || 0; map[k].subtotal += i.subtotal || 0;
+      });
+
+      const rows = Object.values(map).sort((a, b) => a.year === b.year ? a.month - b.month : a.year - b.year);
+      const grand = rows.reduce((s, r) => s + r.total, 0);
+
+      el.innerHTML = `<div class="table-card"><table>
+    <thead><tr>
+      <th>Year</th><th>Quarter</th><th>Month</th><th># Invoices</th>
+      <th>Subtotal</th><th>Tax (HST)</th><th>Total</th><th>Share</th>
+    </tr></thead>
+    <tbody>
+    ${rows.map(r => `<tr>
+      <td>${r.year}</td>
+      <td><span class="badge badge-purple">${r.quarter || '—'}</span></td>
+      <td><strong>${r.monthName || r.month}</strong></td>
+      <td><span class="badge badge-orange">${r.count}</span></td>
+      <td>$${fmt(r.subtotal)}</td>
+      <td>$${fmt(r.tax)}</td>
+      <td class="amt amt-green">$${fmt(r.total)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:5px;overflow:hidden">
+            <div style="width:${grand ? (r.total / grand * 100) : 0}%;height:100%;background:var(--orange);border-radius:4px"></div>
+          </div>
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap">${grand ? (r.total / grand * 100).toFixed(1) : 0}%</span>
+        </div>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+    <tfoot>
+      <tr style="background:rgba(255,107,26,0.08)">
+        <td colspan="3" style="padding:11px 14px;font-weight:700">TOTAL</td>
+        <td style="padding:11px 14px">${rows.reduce((s, r) => s + r.count, 0)}</td>
+        <td style="padding:11px 14px">$${fmt(rows.reduce((s, r) => s + r.subtotal, 0))}</td>
+        <td style="padding:11px 14px">$${fmt(rows.reduce((s, r) => s + r.tax, 0))}</td>
+        <td style="padding:11px 14px;color:var(--success);font-family:'Bebas Neue';font-size:15px">$${fmt(grand)}</td>
+        <td style="padding:11px 14px">100%</td>
+      </tr>
+    </tfoot>
+  </table></div>`;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  CLIENTS VIEW
+    // ══════════════════════════════════════════════════════════════
+    function renderClients() {
+      const el = document.getElementById('clientsContent');
+      if (!invoices.length) { el.innerHTML = emptyState('🏢', 'No Clients Yet', 'Upload invoices to see client data'); return; }
+
+      const map = {};
+      invoices.forEach(i => {
+        const c = i.clientName || 'Unknown';
+        if (!map[c]) map[c] = { count: 0, total: 0, tax: 0, dates: [] };
+        map[c].count++; map[c].total += i.total || 0; map[c].tax += i.tax || 0;
+        if (i.date) map[c].dates.push(i.date);
+      });
+
+      const rows = Object.entries(map).sort((a, b) => b[1].total - a[1].total);
+      const grand = rows.reduce((s, [, v]) => s + v.total, 0);
+
+      el.innerHTML = `<div class="table-card"><table>
+    <thead><tr>
+      <th>Client</th><th># Invoices</th><th>Total Revenue</th>
+      <th>Avg Invoice</th><th>Last Invoice</th><th>% of Revenue</th>
+    </tr></thead>
+    <tbody>
+    ${rows.map(([name, v]) => `<tr>
+      <td><strong>${name}</strong></td>
+      <td><span class="badge badge-orange">${v.count}</span></td>
+      <td class="amt amt-green">$${fmt(v.total)}</td>
+      <td class="amt">$${fmt(v.total / v.count)}</td>
+      <td>${fmtDate(v.dates.sort().slice(-1)[0])}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:5px;overflow:hidden">
+            <div style="width:${grand ? (v.total / grand * 100) : 0}%;height:100%;background:var(--orange);border-radius:4px"></div>
+          </div>
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap">${grand ? (v.total / grand * 100).toFixed(1) : 0}%</span>
+        </div>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  UPLOAD
+    // ══════════════════════════════════════════════════════════════
+    function handleDragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
+    function handleDragLeave() { document.getElementById('uploadZone').classList.remove('drag-over'); }
+    function handleDrop(e) { e.preventDefault(); handleDragLeave(); processFiles([...e.dataTransfer.files]); }
+    function handleFiles(e) { processFiles([...e.target.files]); e.target.value = ''; }
+
+    async function processFiles(files) {
+      const pdfs = files.filter(f => f.name.toLowerCase().endsWith('.pdf'));
+      if (!pdfs.length) { toast('Please upload PDF files only', 'err'); return; }
+
+      document.getElementById('queueWrap').style.display = 'block';
+
+      for (const file of pdfs) {
+        const qid = 'q' + Date.now() + Math.random().toString(36).slice(2);
+        addQueueItem(qid, file.name);
+
+        try {
+          setQStatus(qid, 'proc', 'Sending to parser...');
+          const form = new FormData();
+          form.append('pdf', file);
+
+          const r = await fetch('/api/invoices/upload', { method: 'POST', body: form });
+          const data = await r.json();
+
+          if (!r.ok) {
+            setQStatus(qid, 'err', '✕ ' + (data.error || 'Parse failed'));
+            toast(file.name + ' failed', 'err');
+            continue;
+          }
+
+          if (data.exists) {
+            setQStatus(qid, 'dup', '⟳ Already exists — skipped');
+            toast(file.name + ' already uploaded', 'info');
+            continue;
+          }
+
+          invoices.unshift(data.invoice);
+          refresh();
+          setQStatus(qid, 'done', `✓ ${data.invoice.clientName || 'Unknown'} — $${fmt(data.invoice.total)}`);
+          toast(file.name + ' processed!', 'ok');
+
+        } catch (e) {
+          setQStatus(qid, 'err', '✕ ' + e.message);
+          toast('Error: ' + e.message, 'err');
+        }
+      }
+    }
+
+    function addQueueItem(id, name) {
+      const el = document.createElement('div');
+      el.className = 'queue-item';
+      el.id = id;
+      el.innerHTML = `<div class="dot proc" id="d_${id}"></div>
+    <span class="q-name">📄 ${name}</span>
+    <span class="q-msg" id="m_${id}">Reading...</span>`;
+      document.getElementById('queueList').prepend(el);
+    }
+
+    function setQStatus(id, status, msg) {
+      const d = document.getElementById('d_' + id);
+      const m = document.getElementById('m_' + id);
+      if (d) d.className = 'dot ' + status;
+      if (m) m.textContent = msg;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  MODAL — detail view
+    // ══════════════════════════════════════════════════════════════
+    function showDetail(id) {
+      const i = invoices.find(x => x.id === id); if (!i) return;
+      document.getElementById('modalTitle').textContent = `Invoice ${i.invoiceNumber || i.fileName || ''}`;
+      document.getElementById('modalContent').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item"><label>Client</label><div class="val">${i.clientName || '—'}</div></div>
+      <div class="detail-item"><label>Invoice #</label><div class="val">${i.invoiceNumber || '—'}</div></div>
+      <div class="detail-item"><label>Date</label><div class="val">${fmtDate(i.date)}</div></div>
+      <div class="detail-item"><label>Period</label><div class="val">${i.quarter || '—'} ${i.year || ''} · ${i.monthName || ''}</div></div>
+      <div class="detail-item"><label>Subtotal</label><div class="val amt">$${fmt(i.subtotal || 0)}</div></div>
+      <div class="detail-item"><label>Tax (HST)</label><div class="val amt">$${fmt(i.tax || 0)}</div></div>
+      <div class="detail-item full"><label>Total</label><div class="detail-total">$${fmt(i.total || 0)} CAD</div></div>
+      ${i.paymentMethod ? `<div class="detail-item"><label>Payment</label><div class="val">${i.paymentMethod}</div></div>` : ''}
+      ${i.hstNumber ? `<div class="detail-item"><label>HST #</label><div class="val">${i.hstNumber}</div></div>` : ''}
+    </div>
+    ${i.lineItems?.length ? `
+      <div class="divider"></div>
+      <div class="section-title" style="font-size:14px;margin-bottom:10px">Line Items (${i.lineItems.length})</div>
+      <table class="lit">
+        <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead>
+        <tbody>${i.lineItems.map(l => `
+          <tr>
+            <td>${l.description || '—'}</td>
+            <td>${l.quantity || '—'}</td>
+            <td>$${fmt(l.unitPrice || 0)}</td>
+            <td>$${fmt(l.amount || 0)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>` : `<div style="color:var(--muted);font-size:13px;margin-top:12px">No line items extracted — edit to add manually</div>`}
+    <div style="display:flex;gap:8px;margin-top:20px">
+      <button class="save-btn" onclick="openEdit('${i.id}')">✏️ Edit Invoice</button>
+      <button class="save-btn grey" onclick="closeModalDirect()">Close</button>
+    </div>`;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function openEdit(id) {
+      const i = invoices.find(x => x.id === id); if (!i) return;
+      document.getElementById('modalTitle').textContent = 'Edit Invoice';
+      document.getElementById('modalContent').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item full"><label>Client Name</label><input class="edit-input" id="e_client" value="${i.clientName || ''}"></div>
+      <div class="detail-item"><label>Invoice #</label><input class="edit-input" id="e_invnum" value="${i.invoiceNumber || ''}"></div>
+      <div class="detail-item"><label>Date (YYYY-MM-DD)</label><input class="edit-input" id="e_date" value="${i.date || ''}"></div>
+      <div class="detail-item"><label>Subtotal</label><input class="edit-input" type="number" step="0.01" id="e_sub" value="${i.subtotal || 0}"></div>
+      <div class="detail-item"><label>Tax</label><input class="edit-input" type="number" step="0.01" id="e_tax" value="${i.tax || 0}"></div>
+      <div class="detail-item full"><label>Total</label><input class="edit-input" type="number" step="0.01" id="e_total" value="${i.total || 0}"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="section-title" style="font-size:14px;margin-bottom:10px">Line Items</div>
+    <table class="lit" id="editItemsTable">
+      <thead><tr><th>Product</th><th style="width:70px">Qty</th><th style="width:90px">Unit Price</th><th style="width:90px">Our Price</th><th style="width:36px"></th></tr></thead>
+      <tbody>
+      ${(i.lineItems || []).map(l => `
+        <tr>
+          <td><input class="edit-input" style="padding:5px" value="${l.description || ''}"></td>
+          <td><input class="edit-input" style="padding:5px" type="number" value="${l.quantity || 0}"></td>
+          <td><input class="edit-input" style="padding:5px" type="number" step="0.01" value="${l.unitPrice || 0}"></td>
+          <td><input class="edit-input" style="padding:5px" type="number" step="0.01" value="${l.ourPrice || 0}"></td>
+          <td><button class="action-btn delete" onclick="this.closest('tr').remove()">✕</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <button class="save-btn grey" style="margin-top:8px;padding:6px 14px;font-size:12px" onclick="addEditRow()">+ Add Item</button>
+    <div style="display:flex;gap:8px;margin-top:20px">
+      <button class="save-btn" onclick="saveEdit('${i.id}')">💾 Save Changes</button>
+      <button class="save-btn grey" onclick="showDetail('${i.id}')">Cancel</button>
+    </div>`;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function addEditRow() {
+      const tbody = document.querySelector('#editItemsTable tbody');
+      if (!tbody) return;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+    <td><input class="edit-input" style="padding:5px" value=""></td>
+    <td><input class="edit-input" style="padding:5px" type="number" value="1"></td>
+    <td><input class="edit-input" style="padding:5px" type="number" step="0.01" value="0"></td>
+    <td><input class="edit-input" style="padding:5px" type="number" step="0.01" value="0"></td>
+    <td><button class="action-btn delete" onclick="this.closest('tr').remove()">✕</button></td>`;
+      tbody.appendChild(tr);
+    }
+
+    async function saveEdit(id) {
+      const body = {
+        clientName: document.getElementById('e_client')?.value,
+        invoiceNumber: document.getElementById('e_invnum')?.value,
+        date: document.getElementById('e_date')?.value,
+        subtotal: parseFloat(document.getElementById('e_sub')?.value) || 0,
+        tax: parseFloat(document.getElementById('e_tax')?.value) || 0,
+        total: parseFloat(document.getElementById('e_total')?.value) || 0,
+      };
+
+      const rows = document.querySelectorAll('#editItemsTable tbody tr');
+      body.lineItems = [...rows].map(r => {
+        const inputs = r.querySelectorAll('input');
+        const qty = parseFloat(inputs[1]?.value) || 0;
+        const price = parseFloat(inputs[2]?.value) || 0;
+        return {
+          description: inputs[0]?.value, quantity: qty, unitPrice: price,
+          ourPrice: parseFloat(inputs[3]?.value) || 0, amount: +(qty * price).toFixed(2)
+        };
+      });
+
+      // Update date fields
+      if (body.date) {
+        const parts = body.date.split('-');
+        if (parts.length === 3) {
+          const MNAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+          body.year = parseInt(parts[0]);
+          body.month = parseInt(parts[1]);
+          body.monthName = MNAMES[body.month - 1];
+          body.quarter = 'Q' + Math.ceil(body.month / 3);
+        }
+      }
+
+      try {
+        const r = await fetch('/api/invoices/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        const updated = await r.json();
+        const idx = invoices.findIndex(i => i.id === id);
+        if (idx >= 0) invoices[idx] = { ...invoices[idx], ...updated };
+        closeModalDirect();
+        refresh();
+        toast('Invoice updated', 'ok');
+      } catch (e) { toast('Save failed: ' + e.message, 'err'); }
+    }
+
+    async function deleteInvoice(id) {
+      if (!confirm('Delete this invoice permanently?')) return;
+      try {
+        await fetch('/api/invoices/' + id, { method: 'DELETE' });
+        invoices = invoices.filter(i => i.id !== id);
+        refresh();
+        renderTable();
+        toast('Invoice deleted', 'ok');
+      } catch (e) { toast('Delete failed', 'err'); }
+    }
+
+    function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+    function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+    // ══════════════════════════════════════════════════════════════
+    //  ADMIN
+    // ══════════════════════════════════════════════════════════════
+    async function loadAdmin() {
+      if (currentUser?.role !== 'admin') return;
+      try {
+        const [statsRes, usersRes] = await Promise.all([
+          fetch('/api/admin/stats'),
+          fetch('/api/admin/users')
+        ]);
+        const stats = await statsRes.json();
+        const users = await usersRes.json();
+
+        document.getElementById('adminStatsGrid').innerHTML = `
+      <div class="kpi-card orange"><div class="kpi-label">Total Users</div><div class="kpi-value">${stats.totalUsers || 0}</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Total Invoices</div><div class="kpi-value">${stats.totalInvoices || 0}</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Platform Revenue</div><div class="kpi-value">$${fmtK(stats.totalRevenue || 0)}</div></div>
+      <div class="kpi-card teal"><div class="kpi-label">Total Tax</div><div class="kpi-value">$${fmtK(stats.totalTax || 0)}</div></div>`;
+
+        const clientMap = {};
+        (stats.clientData || []).forEach(c => { if (c.user) clientMap[c.user._id] = c; });
+
+        document.getElementById('usersList').innerHTML = users.map(u => {
+          const cd = clientMap[u._id] || {};
+          return `<div class="user-card">
+        <div class="user-avatar">${(u.companyName || u.username || '?')[0].toUpperCase()}</div>
+        <div class="user-info">
+          <div class="user-name">${u.companyName || u.username}</div>
+          <div class="user-meta">@${u.username} · ${u.role} · ${u.isActive ? '🟢 Active' : '🔴 Inactive'}</div>
+        </div>
+        <div class="stat-pill">
+          <span class="amount">$${fmtK(cd.totalRevenue || 0)}</span>
+          ${cd.invoiceCount || 0} invoices
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="action-btn edit" onclick="toggleUser('${u._id}','${u.isActive}')" title="${u.isActive ? 'Deactivate' : 'Activate'}">
+            ${u.isActive ? '🔒' : '🔓'}
+          </button>
+          <button class="action-btn delete" onclick="deleteUser('${u._id}','${u.username}')" title="Delete">🗑</button>
+        </div>
+      </div>`;
+        }).join('') || emptyState('👥', 'No Users', 'Create accounts to get started');
+
+      } catch (e) { toast('Failed to load admin data', 'err'); }
+    }
+
+    async function toggleUser(id, isActive) {
+      try {
+        await fetch(`/api/admin/users/${id}/toggle`, { method: 'PATCH' });
+        toast('User updated', 'ok');
+        loadAdmin();
+      } catch (e) { toast('Failed', 'err'); }
+    }
+
+    async function deleteUser(id, username) {
+      if (!confirm(`Delete user "${username}" and all their invoices? This cannot be undone.`)) return;
+      try {
+        await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+        toast('User deleted', 'ok');
+        loadAdmin();
+      } catch (e) { toast('Delete failed', 'err'); }
+    }
+
+    function openCreateUser() {
+      document.getElementById('modalTitle').textContent = 'Create User';
+      document.getElementById('modalContent').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item full"><label>Company Name</label><input class="edit-input" id="cu_company" placeholder="Greenbank Wholesale"></div>
+      <div class="detail-item"><label>Username</label><input class="edit-input" id="cu_user" placeholder="username"></div>
+      <div class="detail-item"><label>Email (optional)</label><input class="edit-input" id="cu_email" placeholder="email@co.com"></div>
+      <div class="detail-item"><label>Password</label><input class="edit-input" type="password" id="cu_pass" placeholder="Min 6 chars"></div>
+      <div class="detail-item"><label>Role</label>
+        <select class="edit-input" id="cu_role">
+          <option value="client">Client</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <button class="save-btn" onclick="createUser()">Create Account</button>
+    <button class="save-btn grey" onclick="closeModalDirect()">Cancel</button>`;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    async function createUser() {
+      const body = {
+        companyName: document.getElementById('cu_company')?.value,
+        username: document.getElementById('cu_user')?.value,
+        email: document.getElementById('cu_email')?.value,
+        password: document.getElementById('cu_pass')?.value,
+        role: document.getElementById('cu_role')?.value
+      };
+      if (!body.companyName || !body.username || !body.password) return toast('Fill all required fields', 'err');
+      try {
+        const r = await fetch('/api/admin/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        const data = await r.json();
+        if (!r.ok) return toast(data.error || 'Create failed', 'err');
+        closeModalDirect();
+        toast('User created: @' + body.username, 'ok');
+        loadAdmin();
+      } catch (e) { toast('Failed: ' + e.message, 'err'); }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  EXPORT
+    // ══════════════════════════════════════════════════════════════
+    async function exportExcel() {
+      const url = currentUser?.role === 'admin'
+        ? '/api/invoices/export/excel?all=true'
+        : '/api/invoices/export/excel';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'invoicevault_export.xlsx';
+      a.click();
+      toast('Downloading Excel...', 'info');
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  HELPERS
+    // ══════════════════════════════════════════════════════════════
+    function fmtDate(d) {
+      if (!d) return '—';
+      const parts = d.split('-');
+      if (parts.length === 3 && parts[0].length === 4) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+      return d;
+    }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/login.html';
+    }
+
+    // ── Start ──────────────────────────────────────────────────────
+    init();
+  </script>
+</body>
+
+</html>

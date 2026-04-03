@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: invoicevault-parser
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn parser:app
+    envVars:
+      - key: PORT
+        value: 5001

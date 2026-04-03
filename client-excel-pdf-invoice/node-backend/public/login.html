@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvoiceVault — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:    #0a1628;
+      --navy2:   #0f2040;
+      --navy3:   #1a3260;
+      --orange:  #ff6b1a;
+      --orange2: #e55500;
+      --cream:   #f5f0e8;
+      --white:   #ffffff;
+      --muted:   #8899bb;
+      --error:   #ff4444;
+      --success: #00cc88;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      min-height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Left panel — branding */
+    .left {
+      width: 45%;
+      background: var(--navy2);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+      overflow: hidden;
+    }
+
+    .left::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255,107,26,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .left::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -80px;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(255,107,26,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 60px;
+    }
+
+    .logo-icon {
+      width: 48px; height: 48px;
+      background: var(--orange);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: var(--white);
+      letter-spacing: 2px;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 5vw, 80px);
+      color: var(--white);
+      line-height: 0.95;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+
+    .hero-title span {
+      color: var(--orange);
+      display: block;
+    }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 340px;
+      font-weight: 300;
+    }
+
+    .features {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .feature-dot {
+      width: 6px; height: 6px;
+      background: var(--orange);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Grid lines decoration */
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,107,26,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,107,26,0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    /* Right panel — form */
+    .right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .form-card {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .form-header {
+      margin-bottom: 40px;
+    }
+
+    .form-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: var(--white);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .form-sub {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--navy2);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 36px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .tab.active {
+      background: var(--orange);
+      color: var(--white);
+    }
+
+    /* Form elements */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--navy2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--orange);
+    }
+
+    .field input::placeholder {
+      color: var(--muted);
+      opacity: 0.5;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover  { background: var(--orange2); }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .error-msg {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid rgba(255, 68, 68, 0.3);
+      color: #ff6666;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-msg {
+      background: rgba(0, 204, 136, 0.1);
+      border: 1px solid rgba(0, 204, 136, 0.3);
+      color: var(--success);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .form-pane { display: none; }
+    .form-pane.active { display: block; }
+
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 28px 0;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .left { display: none; }
+      .right { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left branding panel -->
+  <div class="left">
+    <div class="grid-lines"></div>
+    <div class="logo-mark">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">InvoiceVault</div>
+    </div>
+    <h1 class="hero-title">
+      Invoice<br>
+      <span>Management</span><br>
+      Rebuilt.
+    </h1>
+    <p class="hero-sub">
+      Upload PDF invoices, extract data automatically, export to Excel in the exact Greenbank Wholesale format.
+    </p>
+    <div class="features">
+      <div class="feature"><div class="feature-dot"></div>Server-side PDF parsing — accurate every time</div>
+      <div class="feature"><div class="feature-dot"></div>Multi-client with separate data per account</div>
+      <div class="feature"><div class="feature-dot"></div>Export to Excel with correct sheet structure</div>
+      <div class="feature"><div class="feature-dot"></div>Admin dashboard across all clients</div>
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="right">
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-title">Welcome Back</div>
+        <div class="form-sub">Sign in to your account or create a new one</div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('login')">Sign In</div>
+        <div class="tab" onclick="switchTab('signup')">Create Account</div>
+      </div>
+
+      <div id="errorMsg" class="error-msg"></div>
+      <div id="successMsg" class="success-msg"></div>
+
+      <!-- Login Form -->
+      <div class="form-pane active" id="loginPane">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="loginUsername" placeholder="your_username" autocomplete="username">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="submit-btn" onclick="handleLogin()">Sign In</button>
+      </div>
+
+      <!-- Signup Form -->
+      <div class="form-pane" id="signupPane">
+        <div class="field">
+          <label>Company Name</label>
+          <input type="text" id="signupCompany" placeholder="Greenbank Wholesale">
+        </div>
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="signupUsername" placeholder="your_username">
+        </div>
+        <div class="field">
+          <label>Email (optional)</label>
+          <input type="email" id="signupEmail" placeholder="you@company.com">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="signupPassword" placeholder="Min 6 characters">
+        </div>
+        <button class="submit-btn" onclick="handleSignup()">Create Account</button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="footer-note">InvoiceVault v2 · Greenbank Wholesale</div>
+    </div>
+  </div>
+
+  <script>
+    // Enter key support
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const active = document.querySelector('.form-pane.active');
+        if (active.id === 'loginPane') handleLogin();
+        else handleSignup();
+      }
+    });
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup'));
+      });
+      document.getElementById('loginPane').classList.toggle('active', tab === 'login');
+      document.getElementById('signupPane').classList.toggle('active', tab === 'signup');
+      clearMessages();
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('successMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function clearMessages() {
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    async function handleLogin() {
+      clearMessages();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!username || !password) return showError('Please enter username and password');
+
+      const btn = document.querySelector('#loginPane .submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Signing In...';
+
+      try {
+        const r = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await r.json();
+        if (!r.ok) return showError(data.error || 'Login failed');
+        window.location.href = '/';
+      } catch (e) {
+        showError('Connection error — try again');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    }
+
+    async function handleSignup() {
+      clearMessages();
+      const companyName = document.getElementById('signupCompany').value.trim();
+      const username    = document.getElementById('signupUsername').value.trim();
+      const email       = document.getElementById('signupEmail').value.trim();
+      const password    = document.getElementById('signupPassword').value;
+
+      if (!companyName || !username || !password) return showError('Company name, username and password required');
+      if (password.length < 6) return showError('Password must be at least 6 characters');
+
+      const btn = document.querySelector('#signupPane .submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Creating Account...';
+
+      try {
+        const r = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, email, companyName })
+        });
+        const data = await r.json();
+        if (!r.ok) return showError(data.error || 'Signup failed');
+        showSuccess('Account created! Redirecting...');
+        setTimeout(() => window.location.href = '/', 1000);
+      } catch (e) {
+        showError('Connection error — try again');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+      }
+    }
+  </script>
+</body>
+</html>
