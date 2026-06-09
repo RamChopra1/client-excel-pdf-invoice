@@ -1,0 +1,8 @@
+{
+  "builds": [
+    { "src": "parser.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "parser.py" }
+  ]
+}
